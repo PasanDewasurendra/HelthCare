@@ -1,2 +1,2 @@
 # HelthCare
-A Hospital Management System that developing for our PAF group assignment.
+Implement web service for the Appointment module.
