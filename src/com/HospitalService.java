@@ -1,5 +1,6 @@
 package com;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -17,7 +18,7 @@ import org.jsoup.parser.Parser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import contoller.Hospital;
+import model.Hospital;
 
 
 @Path("/Hospital")
@@ -25,6 +26,7 @@ public class HospitalService {
 	
 	Hospital obj = new Hospital();
 	
+	@RolesAllowed({"admin","patient","doctor"})
 	@GET  
 	@Path("/")  
 	@Produces(MediaType.TEXT_HTML)  
@@ -34,6 +36,7 @@ public class HospitalService {
 		 
 	}
 	
+	@RolesAllowed("admin")
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -51,6 +54,7 @@ public class HospitalService {
 		
 	}
 	
+	@RolesAllowed({"admin","doctor"})
 	@GET
 	@Path("/Patient")
 	@Produces(MediaType.TEXT_HTML)
@@ -59,6 +63,7 @@ public class HospitalService {
 		return obj.getAllPatients();
 	}
 	
+	@RolesAllowed({"admin","doctor"})
 	@GET
 	@Path("/Doctor")
 	@Produces(MediaType.TEXT_HTML)
@@ -67,6 +72,8 @@ public class HospitalService {
 		return obj.getAllDoctors();
 	}
 	
+	
+	@RolesAllowed({"admin","patient"})
 	@POST
 	@Path("/Schedule")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -79,21 +86,11 @@ public class HospitalService {
 		String location = scheduleObj.get("location").getAsString();
 		String speciality = scheduleObj.get("speciality").getAsString();
 		
-		
 		return obj.getDoctorSchedule(doctor, date, location, speciality);	
-		
+
 	}
 	
-	@POST
-	@Path("/Schedule/add")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.TEXT_PLAIN)
-	public String addDoctorSchedule(@FormParam("doctor_name") String doctor_name, @FormParam("time_from") String time_from, @FormParam("time_to") String time_to, @FormParam("date") String date, @FormParam("speciality") String speciality, @FormParam("location") String location) {
-		
-		return obj.addDoctorSchedule(doctor_name, time_from, time_to, date, speciality, location);	
-		
-	}
-	
+	@RolesAllowed({"patient","admin","doctor"})
 	@GET
 	@Path("/Schedule")
 	@Produces(MediaType.TEXT_HTML)
@@ -103,6 +100,20 @@ public class HospitalService {
 		
 	}
 	
+	
+	@RolesAllowed("admin")
+	@POST
+	@Path("/Schedule/add")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_HTML)
+	public String addDoctorSchedule(@FormParam("doctor_name") String doctor_name, @FormParam("time_from") String time_from, @FormParam("time_to") String time_to, @FormParam("date") String date, @FormParam("speciality") String speciality, @FormParam("location") String location) {
+		
+		return obj.addDoctorSchedule(doctor_name, time_from, time_to, date, speciality, location);	
+		
+	}
+	
+
+	@RolesAllowed("admin")
 	@PUT
 	@Path("/Schedule")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -130,6 +141,7 @@ public class HospitalService {
 		return obj.updateDoctorSchedule(id, doctor_name, time_from, time_to, date, speciality, location);
 	}
 	
+	@RolesAllowed("admin")
 	@DELETE
 	@Path("/Schedule")
 	@Consumes(MediaType.APPLICATION_XML)

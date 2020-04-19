@@ -29,8 +29,8 @@ public class Authentication implements ContainerRequestFilter  {
 			if(authHeader != null && authHeader.size()>0) {
 				String authToken = authHeader.get(0);
 				authToken = authToken.replaceFirst(AUTHORIZATION_HEADER_PRIFIX, "");
-				String decodedByte = new String(Base64.decodeBase64(authToken));
-				StringTokenizer tokenizer = new StringTokenizer(decodedByte,":");
+				String decodedString = new String(Base64.decodeBase64(authToken));
+				StringTokenizer tokenizer = new StringTokenizer(decodedString,":");
 				String username = tokenizer.nextToken();
 				String password = tokenizer.nextToken();
 				
@@ -38,6 +38,7 @@ public class Authentication implements ContainerRequestFilter  {
 					return;
 				}
 			}
+			
 			Response unauthorizedStatus = Response.status(Response.Status.UNAUTHORIZED)
 					.entity("User cannot access the resouce.")
 					.build();
@@ -48,6 +49,4 @@ public class Authentication implements ContainerRequestFilter  {
 		
 	}
 
-
-	
 }
