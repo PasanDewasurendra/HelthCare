@@ -6,6 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
 public class Doctor {
 	
 	private Connection connect() {
@@ -174,8 +177,50 @@ public class Doctor {
 	 
 		return output;  
 	}
+	
+	
+	public String appointmentSchedule(String doctorID) {
+	
+		String out = "<table border='1'><tr><th>Number</th><th>Type</th><th>Date</th><th>Description</th><th>Patient</th></tr>";
+		
+		try {
+			
+			Connection con = connect(); 
+			 
+			if (con == null)    
+			{return "Error while connecting to the database for deleting."; 
+			}
+			
+			String query = "SELECT * FROM appointment WHERE doctor = '"+doctorID+"'";
+			
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			while(rs.next()) {
+				String no = rs.getString("number");
+				String type = rs.getString("type");
+				String date = rs.getString("date");
+				String description = rs.getString("description");
+				String patient = rs.getString("patient");
+				
+				out += "<tr><td>"+no+"</td><td>"+type+"</td><td>"+date+"</td><td>"+description+"</td><td>"+patient+"</td></tr>";
+				
+			}
+			
+			out += "</table>";
+			
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return out;
+		
+	}
 	 
 
+	
+	
 
 
 }

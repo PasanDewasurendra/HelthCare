@@ -66,5 +66,19 @@ public class DoctorService {
 		String output = doctorObj.deleteDoctor(doctorID);
 		return output;
 	}
+	
+	
+	@GET
+	@Path("/Schedule")
+	@Consumes(MediaType.APPLICATION_XML)
+	@Produces(MediaType.TEXT_HTML)
+	public String appintmentSchedule(String doctorID) {
+		
+		Document doc = Jsoup.parse(doctorID, "", Parser.xmlParser());
+		String docId = doc.select("doctor").text();
+		
+		return doctorObj.appointmentSchedule(docId);
+		
+	}
 
 }
