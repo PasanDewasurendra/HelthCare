@@ -67,7 +67,7 @@ public class HospitalService {
 		return obj.getAllDoctors();
 	}
 	
-	@GET
+	@POST
 	@Path("/Schedule")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.TEXT_HTML)
@@ -77,20 +77,31 @@ public class HospitalService {
 		String doctor = scheduleObj.get("doctor_name").getAsString();
 		String date =  scheduleObj.get("date").getAsString();
 		String location = scheduleObj.get("location").getAsString();
+		String speciality = scheduleObj.get("speciality").getAsString();
 		
-		return obj.getDoctorSchedule(doctor, date, location);	
+		
+		return obj.getDoctorSchedule(doctor, date, location, speciality);	
 		
 	}
 	
 	@POST
-	@Path("/Schedule")
+	@Path("/Schedule/add")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
 	public String addDoctorSchedule(@FormParam("doctor_name") String doctor_name, @FormParam("time_from") String time_from, @FormParam("time_to") String time_to, @FormParam("date") String date, @FormParam("speciality") String speciality, @FormParam("location") String location) {
 		
 		return obj.addDoctorSchedule(doctor_name, time_from, time_to, date, speciality, location);	
 		
-	} 
+	}
+	
+	@GET
+	@Path("/Schedule")
+	@Produces(MediaType.TEXT_HTML)
+	public String getDoctorSchedule() {
+		
+		return obj.getDoctorSchedule();	
+		
+	}
 	
 	@PUT
 	@Path("/Schedule")
@@ -100,13 +111,21 @@ public class HospitalService {
 		
 		JsonObject hpObj = new JsonParser().parse(hospitalData).getAsJsonObject();
 		
-		String id = hpObj.get("id").getAsString();
-		String doctor_name = hpObj.get("doctor_name").getAsString();
-		String time_from = hpObj.get("time_from").getAsString();
-		String time_to = hpObj.get("time_to").getAsString();
-		String date = hpObj.get("date").getAsString();
-		String speciality = hpObj.get("speciality").getAsString();
-		String location = hpObj.get("location").getAsString();
+		String id = null, date = null, doctor_name = null, time_from = null, time_to = null, speciality = null, location = null;
+		
+		try {
+		 id = hpObj.get("id").getAsString();
+		 doctor_name = hpObj.get("doctor_name").getAsString();
+		 time_from = hpObj.get("time_from").getAsString();
+		 time_to = hpObj.get("time_to").getAsString();
+		 date = hpObj.get("date").getAsString();
+		 speciality = hpObj.get("speciality").getAsString();
+		 location = hpObj.get("location").getAsString();
+		
+		}catch (Exception e) {
+			// TODO: handle exception
+			//e.printStackTrace();
+		}
 			
 		return obj.updateDoctorSchedule(id, doctor_name, time_from, time_to, date, speciality, location);
 	}
@@ -115,9 +134,9 @@ public class HospitalService {
 	@Path("/Schedule")
 	@Consumes(MediaType.APPLICATION_XML)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteDoctorSchedule(String hospitalData) {
+	public String deleteDoctorSchedule(String schedule) {
 		
-		Document doc = Jsoup.parse(hospitalData,"",Parser.xmlParser());
+		Document doc = Jsoup.parse(schedule,"",Parser.xmlParser());
 		String id = doc.select("id").text();
 
 		return obj.deleteDoctorSchedule(id);
@@ -127,10 +146,9 @@ public class HospitalService {
 //	@Path("/Appointment")
 //	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 //	@Produces(MediaType.TEXT_PLAIN)
-//	public String confirmAppintment(String apData) {
+//	public String confirmAppintment(String apData){
 //		
 //		return obj.confirmAppointment(apData);
 //	}
-
 	
 }

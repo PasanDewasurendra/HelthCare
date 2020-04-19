@@ -10,13 +10,13 @@ import util.DBConnection;
 public class Hospital {
 	
 	String out = "";
+	DBConnection db = new DBConnection();
 	
 	public String getHospitalDetails() {
 		
 		out = "<table border='1'><tr><th>ID</th><th>Name</th><th>Address</th><th>Phone</th></tr>";
 		
 		try {
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 
 			String query = "SELECT * FROM hospital";
@@ -47,7 +47,6 @@ public class Hospital {
 	public String UpdateHospitalDetails(String id, String name, String address, String phone) {
 		
 		try {
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 			
 			String query = "UPDATE hospital SET name=?, address=?, phone=? WHERE id=?";
@@ -77,7 +76,6 @@ public class Hospital {
 		out = "<table border='1'><tr><th>Patient ID</th><th>Patient Name</th><th>Patient Address</th><th>Patient Phone</th><th>Patient Email</th></tr>";
 		
 		try {
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 
 			String query = "SELECT * FROM patient";
@@ -112,7 +110,6 @@ public class Hospital {
 		out = "<table border='1'><tr><th>Doctor ID</th><th>Doctor Name</th><th>Doctor Address</th><th>Doctor Phone</th><th>Speciality</th<th>Qualification</th></tr>";
 		
 		try {
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 
 			String query = "SELECT * FROM doctor";
@@ -144,9 +141,11 @@ public class Hospital {
 	
 	
 	public String getDoctorSchedule() {
+		
+		out = "<table border='1'><tr><th>Date</th><th>Doctor Name</th><th>Speciality</th><th>Location</th><th>Time From</th><th>Time To</th></tr>";
+		
 	
 		try {
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 
 			String query = "SELECT * FROM doctor_schedule";
@@ -154,14 +153,14 @@ public class Hospital {
 			ResultSet rs = st.executeQuery(query);
 			
 			while(rs.next()) {
-				String id = rs.getString("day");
-				String name = rs.getString("name");
-				String address = rs.getString("address");
-				String phone = rs.getString("phone");
+				String date = rs.getString("date");
+				String name = rs.getString("doctor_name");
+				String loc = rs.getString("location");
 				String specs = rs.getString("speciality");
-				String qualify = rs.getString("qualification");
+				String timef = rs.getString("time_from");
+				String timet = rs.getString("time_to");
 				
-				String row = "<tr><td>"+id+"</td><td>"+name+"</td><td>"+address+"</td><td>"+phone+"</td><td>"+specs+"</td><td>"+qualify+"</td></tr>";
+				String row = "<tr><td>"+date+"</td><td>"+name+"</td><td>"+specs+"</td><td>"+loc+"</td><td>"+timef+"</td><td>"+timet+"</td></tr>";
 				out = out.concat(row);
 
 			}	
@@ -175,18 +174,17 @@ public class Hospital {
 		System.out.println(out);
 		
 		return out;	
-		
 	}
 	
-	public String getDoctorSchedule(String doctor, String date, String location) {
+	
+	public String getDoctorSchedule(String doctor, String date, String location, String speciality) {
 		
 		out = "<table border='1'><tr><th>Doctor Name</th><th>Date</th><th>Time: from</th><th>Time: to</th><th>Speciality</th<th>Location</th></tr>";
 		
 		try {
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 
-			String query = "SELECT * FROM doctor_schedule WHERE doctor_name = ? AND date = ? AND location = ?";
+			String query = "SELECT * FROM doctor_schedule WHERE doctor_name = '"+doctor+"' AND date = '"+date+"' AND location = '"+location+"' AND speciality = '"+speciality+"'";
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery(query);
 			
@@ -213,11 +211,9 @@ public class Hospital {
 		
 	}
 	
-	
 	public String addDoctorSchedule(String doctor_name, String time_from, String time_to, String date, String speciality, String location) {
 		
 		try {	
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 
 			String query = "INSERT INTO doctor_schedule(`doctor_name`, `time_from`, `time_to`, `date`, `speciality`, `location`) VALUES(?,?,?,?,?,?)";
@@ -243,10 +239,10 @@ public class Hospital {
 	public String updateDoctorSchedule(String id,String doctor_name, String time_from, String time_to, String date, String speciality, String location ) {
 		
 		try {	
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
-			
+
 			String query = "UPDATE doctor_schedule SET doctor_name=?, time_from = ?, time_to = ?, date = ?, speciality = ?, location = ? WHERE id=?";
+			
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, doctor_name);
 			ps.setString(2, time_from);
@@ -254,7 +250,7 @@ public class Hospital {
 			ps.setString(4, date);
 			ps.setString(5,speciality);
 			ps.setString(6, location);
-			ps.setString(7, id);
+			ps.setInt(7, Integer.parseInt(id));
 			ps.executeUpdate();
 			con.close();
 			out = "Schedule Data Updated.";
@@ -271,7 +267,6 @@ public class Hospital {
 	public String deleteDoctorSchedule(String id) {
 		
 		try {	
-			DBConnection db = new DBConnection();
 			Connection con = db.connect();
 			
 			String query = "DELETE FROM doctor_schedule WHERE id = ?";
