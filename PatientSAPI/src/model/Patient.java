@@ -14,7 +14,7 @@ public class Patient {
 			Class.forName("com.mysql.jdbc.Driver");
 
 			// Provide the correct details: DBServer/DBName, Username, Password
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/patients", "root", "root");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/", "root", "");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -31,7 +31,7 @@ public class Patient {
 				return "Error Connecting to the Database for Inserting.";
 			}
 			// create a prepared statement
-			String query = " insert into patients(`pID`,`pName`,`pAddress`,`pDOB`,`pAge`,`pGender`,`pEmail`,`pTelephone`)"
+			String query = " insert into healthcare(`pID`,`pName`,`pAddress`,`pDOB`,`pAge`,`pGender`,`pEmail`,`pTelephone`)"
 					+ " values (?, ?, ?, ?, ?, ?, ?, ?)";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
